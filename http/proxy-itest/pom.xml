@@ -15,8 +15,10 @@
     <description>Integration test for the HTTP Proxy module</description>
 
     <properties>
+        <rat.skip>true</rat.skip>
         <felix.java.version>8</felix.java.version>
         <http.proxy.version>3.0.1-SNAPSHOT</http.proxy.version>
+        <http.bridge.version>3.0.7-SNAPSHOT</http.bridge.version>
     </properties>
 
 
@@ -28,6 +30,13 @@
             <version>${http.proxy.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.bridge</artifactId>
+            <version>3.0.7-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -82,11 +91,11 @@
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-all</artifactId>
             <version>${jetty.version}</version>
+            <classifier>uber</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>

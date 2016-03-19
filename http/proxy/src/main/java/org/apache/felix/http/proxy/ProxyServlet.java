@@ -19,6 +19,7 @@ package org.apache.felix.http.proxy;
 import org.osgi.framework.BundleContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
@@ -57,10 +58,25 @@ public final class ProxyServlet
     {
         HttpServlet dispatcher = this.tracker.getDispatcher();
         if (dispatcher != null) {
-            dispatcher.service(req, res);
+            dispatcher.service(wrap(req), res);
         } else {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }
+    }
+
+    private HttpServletRequest wrap(HttpServletRequest req) {
+        return new HttpServletRequestWrapper(req) {
+            @Override public String getHeader(String name) {
+                if ("Forward".equals(name))
+                {
+                    return "by=org.apache.felix.http.proxy";
+                }
+                else
+                {
+                    return super.getHeader(name);
+                }
+            }
+        };
     }
 
     @Override

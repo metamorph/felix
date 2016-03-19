@@ -45,6 +45,17 @@ public class DispatcherTest extends BootstrapSupport {
 	}
 
 	@Test
+	public void shouldDispatchFromRootServlet() {
+		// TODO: To support different jetties, add a `withJetty(args, Consumer<IntegrationContext>)` that starts and stops jetty.
+		// The `IntegrationContext` would be a way to execute the http-request and to access the bundleContext.
+	}
+
+	@Test
+	public void shouldDispatchFromRelativeServlet() {
+
+	}
+
+	@Test
 	public void smokeTest() throws IOException, InterruptedException, ServletException, NamespaceException {
 		Dictionary<String, Object> props = new Hashtable<>();
 		props.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN, "/foo");

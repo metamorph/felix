@@ -41,6 +41,10 @@ import org.apache.felix.http.base.internal.whiteboard.WhiteboardManager;
 
 public final class Dispatcher
 {
+
+    public static final String PROXY_FORWARD_HEADER = "Forward";
+    public static final String PROXY_FORWARD_VALUE = "by=org.apache.felix.http.proxy";
+
     private final HandlerRegistry handlerRegistry;
 
     private volatile WhiteboardManager whiteboardManager;
@@ -57,6 +61,11 @@ public final class Dispatcher
     public void setWhiteboardManager(@CheckForNull final WhiteboardManager service)
     {
         this.whiteboardManager = service;
+    }
+
+    private static boolean isRequestFromProxy(HttpServletRequest request) {
+        String forwardHeader = request.getHeader(PROXY_FORWARD_HEADER);
+        return forwardHeader != null && PROXY_FORWARD_VALUE.equals(forwardHeader);
     }
 
     /**
@@ -83,7 +92,8 @@ public final class Dispatcher
 
         // get full decoded path for dispatching
         // we can't use req.getRequestURI() or req.getRequestURL() as these are returning the encoded path
-        String path = req.getServletPath();
+
+        String path = isRequestFromProxy(req) ? null : req.getServletPath();
         if ( path == null )
         {
             path = "";
