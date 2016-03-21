@@ -20,12 +20,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.annotation.CheckForNull;
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -117,7 +112,11 @@ public final class Dispatcher
         }
 
         final ExtServletContext servletContext = pr.handler.getContext();
-        final RequestInfo requestInfo = new RequestInfo(pr.servletPath, pr.pathInfo, null, req.getRequestURI());
+        final RequestInfo requestInfo = new RequestInfo(
+                isRequestFromProxy(req) ? req.getServletPath() + pr.servletPath : pr.servletPath,
+                pr.pathInfo,
+                null,
+                req.getRequestURI());
 
         final HttpServletRequest wrappedRequest = new ServletRequestWrapper(req, servletContext, requestInfo, null,
                 pr.handler.getContextServiceId(),
