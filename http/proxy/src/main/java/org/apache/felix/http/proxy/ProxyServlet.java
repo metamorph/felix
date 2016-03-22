@@ -19,6 +19,7 @@ package org.apache.felix.http.proxy;
 import org.osgi.framework.BundleContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
@@ -57,7 +58,7 @@ public final class ProxyServlet
     {
         HttpServlet dispatcher = this.tracker.getDispatcher();
         if (dispatcher != null) {
-            dispatcher.service(req, res);
+            dispatcher.service(new ProxyServletRequestWrapper(req), res);
         } else {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }
@@ -80,5 +81,33 @@ public final class ProxyServlet
 
         throw new ServletException("Bundle context attribute [" + BundleContext.class.getName() +
                 "] not set in servlet context");
+    }
+
+    private static class ProxyServletRequestWrapper extends HttpServletRequestWrapper
+    {
+        ProxyServletRequestWrapper(HttpServletRequest request)
+        {
+            super(request);
+        }
+
+        @Override
+        public String getServletPath()
+        {
+            return "";
+        }
+
+        @Override
+        public String getRequestURI()
+        {
+            String pathInfo = super.getPathInfo();
+            if (pathInfo != null)
+            {
+                return super.getContextPath().concat(pathInfo);
+            }
+            else
+            {
+                return super.getContextPath();
+            }
+        }
     }
 }
